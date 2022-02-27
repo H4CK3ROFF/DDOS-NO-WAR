@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -25,6 +25,11 @@ namespace NOWAR
 
             int threads = defaultThreads;
             int.TryParse(threadInput, out threads);
+            if (threads == 0)
+            {
+                threads = defaultThreads;
+            }
+
             Console.WriteLine($"Number of threads set to: {threads}");
 
 
