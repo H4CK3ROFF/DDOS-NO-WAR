@@ -14,3 +14,13 @@ If you don't have a C# compiler, there is a list of Release Versions to the righ
 Download ZIP
 
 ![image](https://user-images.githubusercontent.com/93394175/155881633-eb7c5189-3210-4ec1-ad3e-bfc7a7b49d09.png)
+
+
+
+# HOW TO USE PROXY
+
+I recently added the ability to use proxies. 
+The proxies are in the file "proxy.txt", I provided 40k proxy servers which were obtained through my ProxyGrabber (https://github.com/H4CK3ROFF/ProxyGrabber).
+
+These proxies may be out of date and may not work, therefore it is better to use your own private proxies, or update often Proxy but newer ones.
+You can get proxies through my ProxyGrabber (https://github.com/H4CK3ROFF/ProxyGrabber) or any other site or grabber at your discretion.
